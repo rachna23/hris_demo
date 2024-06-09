@@ -1,0 +1,2 @@
+class ParentTeam < ApplicationRecord
+end
