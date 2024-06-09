@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'csv'
 
 namespace :one_time do
   task seed_human_resource_info_system_data: :environment do
-    
     CSV.parse(File.read('./db/seed/hris.csv'), quote_char: '"', headers: true).each do |row|
       # Create or find the manager
       user = User.find_or_create_by!(email: row['Email']) do |u|
@@ -30,16 +31,19 @@ namespace :one_time do
           pt.team = row['Team']
           pt.manager = team.manager
         end
-        team.update!(parent_team: parent_team)
+        team.update!(parent_team:)
       end
 
       # Ensure parent teams cannot have individual contributors
-      team.update!(individual_contributor: false) if team.parent_team.present?
+      if team.parent_team.present?
+        team.update!(individual_contributor: false)
+      else
+        team.update!(individual_contributor: true)
+      end
 
       # Create or find the membership
-      membership = Membership.find_or_create_by!(user: user, team: team) do |m|
+      Membership.find_or_create_by!(user:, team:) do |m|
         m.role = (team.manager.present? ? 'manager' : 'member')
-
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddTeamAndSubTeamToTeams < ActiveRecord::Migration[7.1]
   def change
     add_column :teams, :team, :string

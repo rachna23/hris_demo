@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Team < ApplicationRecord
   belongs_to :manager, class_name: 'User', optional: true
   belongs_to :parent_team, class_name: 'Team', optional: true
@@ -7,15 +9,14 @@ class Team < ApplicationRecord
 
   validates :name, presence: true, uniqueness: true
 
-
   # Additional logic to ensure parent teams do not have individual contributors
   before_save :check_parent_team
 
   private
 
   def check_parent_team
-    if parent_team.present?
-      self.individual_contributor = false
-    end
+    return unless parent_team.present?
+
+    self.individual_contributor = false
   end
 end
